@@ -20,7 +20,7 @@ public class ProcessCommandImpl {
 	private static BufferedReader reader;
 	private static PrintWriter printWriter;
 	private static Socket requestSocket = null;
-	static Logger logger = Logger.getLogger(Consumer.class);
+	static Logger logger = Logger.getLogger("");
 	private static PropertiesConfiguration prop;
 	public Timer timer;
 	private String number;
@@ -163,7 +163,7 @@ public class ProcessCommandImpl {
 			} 
 		} catch (IOException exception) {
 			logger.error("The Socket server connection is DisConnected, ReConnect to the Server");
-			Consumer.getConnection();
+			ComvenientConsumer.getConnection();
 		} catch (ConfigurationException e) {
 			logger.error("(ConfigurationException) Properties file loading error.... : " + e.getMessage());
 		} 
@@ -206,7 +206,7 @@ public class ProcessCommandImpl {
 			logger.error("thread is Interrupted for the : " + e.getCause().getLocalizedMessage());
 		} catch (IOException e) {
 			logger.error("The Socket server connection is DisConnected, ReConnect to the Server");
-			Consumer.getConnection();
+			ComvenientConsumer.getConnection();
 		}
 	}
 	
@@ -217,7 +217,7 @@ public class ProcessCommandImpl {
 			if(value==null){
 				throw new NullPointerException();
 			}else{		
-				Consumer.sendResponse(value,id,prdetailsId);
+				ComvenientConsumer.sendResponse(value,id,prdetailsId);
 			}		
 		} catch(NullPointerException e){
 			logger.error("NullPointerException : Output from the Oss System Server is : " + value);

@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Queue;
 
+import javax.management.RuntimeErrorException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -16,6 +17,7 @@ import javax.security.cert.X509Certificate;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -29,7 +31,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-public class Producer implements Runnable {
+public class ComvenientProducer implements Runnable {
 
 	private int no;
 	private String ashok;
@@ -43,7 +45,7 @@ public class Producer implements Runnable {
 	private static HttpClient httpClient;
 	private static Gson gsonConverter = new Gson();
 	private int wait;
-	static Logger logger = Logger.getLogger(Producer.class);
+	static Logger logger = Logger.getLogger("");
 
 	public static HttpClient wrapClient(HttpClient base) {
 
@@ -92,7 +94,7 @@ public class Producer implements Runnable {
 		}
 	}
 
-	public Producer(Queue<ProcessRequestData> messageQueue1,
+	public ComvenientProducer(Queue<ProcessRequestData> messageQueue1,
 			PropertiesConfiguration prop1) {
 		// 1. Here intialize connection object for connecting to the RESTful
 		// service
@@ -172,13 +174,13 @@ public class Producer implements Runnable {
 				logger.error("Authentication Failed : HTTP error code is: "
 						+ response.getStatusLine().getStatusCode());
 				httpClient.getConnectionManager().shutdown();	
-				throw new NullPointerException();		
+				throw new AuthenticationException("AuthenticationException :  BSS system server username (or) password you entered is incorrect . check in the ComvenientIntegrator.ini file");		
 			}
 			else if(response.getStatusLine().getStatusCode() == 404){
 				logger.error("Resource Not Found Exception : HTTP error code is: "
 						+ response.getStatusLine().getStatusCode());
 				httpClient.getConnectionManager().shutdown();
-				throw new IllegalAccessError();			
+				throw new RuntimeErrorException(null, "Resource NotFound Exception :  BSS server system 'GetQuery' url error.");	
 			}
 			else if(response.getStatusLine().getStatusCode() != 200){
 				logger.error("Failed : HTTP error code : "
@@ -219,8 +221,16 @@ public class Producer implements Runnable {
 		} catch (IllegalStateException e) {
 			logger.error("IllegalStateException: " + e.getCause().getLocalizedMessage());
 			
-		} catch (Exception e) {
-			logger.error("Exception: " + e.getCause().getLocalizedMessage());
+		} catch (AuthenticationException e) {						
+			
+			logger.error("AuthenticationException: " + e.getLocalizedMessage());
+			System.exit(0);
+			
+		} catch (RuntimeErrorException e) {
+			
+			logger.error("ResourceNotFoundException: " + e.getLocalizedMessage());
+			System.exit(0);
+			
 		}
 
 	}

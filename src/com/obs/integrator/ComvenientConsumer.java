@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class Consumer implements Runnable {
+public class ComvenientConsumer implements Runnable {
 
 	private static Queue<ProcessRequestData> queue;
 	static Socket requestSocket = null;
@@ -39,7 +39,7 @@ public class Consumer implements Runnable {
 	private static byte[] encoded;
 	private static String tenantIdentifier;
 	private static HttpClient httpClient;
-	static Logger logger = Logger.getLogger(Consumer.class);
+	static Logger logger = Logger.getLogger("");
 	private static ProcessCommandImpl processCommand;
 	public static int wait;
 
@@ -102,7 +102,7 @@ public class Consumer implements Runnable {
 			logger.error(" Connection to the CAS server is Not Established .... , " + e.getMessage());
 			try {
 				Thread.sleep(wait);
-				Consumer.getConnection();
+				ComvenientConsumer.getConnection();
 			} catch (InterruptedException e1) {
 				logger.error("thread is Interrupted for the : " + e.getCause().getLocalizedMessage());
 			}
@@ -114,7 +114,7 @@ public class Consumer implements Runnable {
 	}
 
 	@SuppressWarnings("static-access")
-	public Consumer(Queue<ProcessRequestData> queue1,
+	public ComvenientConsumer(Queue<ProcessRequestData> queue1,
 			PropertiesConfiguration prop2) {
 		try {
 			this.queue = queue1;
@@ -127,7 +127,7 @@ public class Consumer implements Runnable {
 			tenantIdentifier = prop.getString("tenantIdentfier");
 			String ashok = username.trim() + ":" + password.trim();
 			encoded = Base64.encodeBase64(ashok.getBytes());
-			Consumer.getConnection();
+			ComvenientConsumer.getConnection();
 		} catch (Exception e) {
 			logger.error("Exception:" + e.getStackTrace());
 		}
@@ -162,7 +162,7 @@ public class Consumer implements Runnable {
 				}
 			} else {
 				Thread.sleep(wait);
-				Consumer.getConnection();
+				ComvenientConsumer.getConnection();
 			}
 		} catch (InterruptedException e) {
 			logger.error("thread is Interrupted for the : " + e.getCause().getLocalizedMessage());
